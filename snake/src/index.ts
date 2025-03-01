@@ -41,21 +41,19 @@ class Vector2
 
 class Square {
     width: number;
-    height: number;
     x: number;
     y: number;
     direction : Vector2;
+    movementInterval : number;
     moveTimer : number;
-    speed : number;
 
-    constructor(width: number, height: number, x: number, y: number) {
+    constructor(width: number, x: number, y: number) {
         this.width = width;
-        this.height = height;
         this.x = x;
         this.y = y;
         this.direction = new Vector2(0, -1);
+        this.movementInterval = .2;
         this.moveTimer = 0;
-        this.speed = 25;
     }
 
     update() : void
@@ -78,7 +76,7 @@ class Square {
         }
         
         this.moveTimer += deltaTime;
-        if(this.moveTimer > 1)
+        if(this.moveTimer > this.movementInterval)
         {
             this.move();
             this.moveTimer = -deltaTime;
@@ -87,17 +85,17 @@ class Square {
     }
 
     move(): void {
-        this.x += this.direction.x * this.speed;
-        this.y += this.direction.y * this.speed;
+        this.x += this.direction.x * this.width;
+        this.y += this.direction.y * this.width;    
     }
 
     draw(): void {
         ctx!.fillStyle = "red"; // Set color
-        ctx!.fillRect(this.x, this.y, this.width, this.height);
+        ctx!.fillRect(this.x, this.y, this.width, this.width);
     }
 }
 
-const square = new Square(100, 100, (canvas.width - 100) / 2, (canvas.height - 100) / 2);
+const square = new Square(10, (canvas.width - 100) / 2, (canvas.height - 100) / 2);
 
 let lastTime = performance.now();
 let deltaTime : number;
