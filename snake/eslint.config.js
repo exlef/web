@@ -16,7 +16,7 @@ export default [
                 cancelAnimationFrame: "readonly",
                 HTMLCanvasElement: "readonly",
                 console: "readonly",
-                
+                performance: "readonly",
                 // Add other globals as needed
             },
         },
