@@ -32,6 +32,17 @@ function isKeyPressed(key: string): boolean
     return keys[key] === true;
 }
 
+function checkSquareCollision(squareA: Square, squareB: Square): boolean 
+{
+    // Check for overlap on both axes
+    return (
+        squareA.pos.x < squareB.pos.x + squareB.width &&
+    squareA.pos.x + squareA.width > squareB.pos.x &&
+    squareA.pos.y < squareB.pos.y + squareB.width &&
+    squareA.pos.y + squareA.width > squareB.pos.y
+    );
+}
+
 class Vector2 
 {
     x: number;
@@ -60,9 +71,9 @@ class Square
         this.width = width;
     }
 
-    draw(): void 
+    draw(color : string): void 
     {
-        ctx!.fillStyle = "red"; // Set color
+        ctx!.fillStyle = color; // Set color
         ctx!.fillRect(this.pos.x, this.pos.y, this.width, this.width);
     }
 }
@@ -74,6 +85,7 @@ class Snake
     direction: Vector2;
     movementInterval: number;
     moveTimer: number;
+    isAlive : boolean;
 
     constructor(width: number, x: number, y: number) 
     {
@@ -83,6 +95,7 @@ class Snake
         this.direction = new Vector2(0, -1);
         this.movementInterval = 0.2;
         this.moveTimer = 0;
+        this.isAlive = true;
     }
 
     update(): void 
@@ -109,15 +122,17 @@ class Snake
         }
 
         this.moveTimer += deltaTime;
-        if (this.moveTimer > this.movementInterval) 
+        if (this.moveTimer > this.movementInterval && this.isAlive) 
         {
             this.move();
             this.moveTimer = -deltaTime;
+
+            this.checkCollisions();
         }
         for (let i = 0; i < this.squares.length; i++) 
         {
             const element = this.squares[i];
-            element.draw();
+            element.draw("red");
         }
     }
 
@@ -139,6 +154,19 @@ class Snake
         }
     }
 
+    checkCollisions() : void
+    {
+        const head = this.squares[0];
+        for (let i = 1; i < this.squares.length; i++) 
+        {
+            const tail = this.squares[i];
+            if(checkSquareCollision(head, tail))
+            {
+                this.isAlive = false;
+            }
+        }
+    }
+
     addSegment()
     {
         const lastSquare = this.squares[this.squares.length - 1];
@@ -149,7 +177,8 @@ class Snake
     }
 }
 
-const square = new Snake(10, (canvas.width - 100) / 2, (canvas.height - 100) / 2);
+const snake = new Snake(10, (canvas.width - 10) / 2, (canvas.height - 10) / 2);
+const food = new Square(new Vector2(10,10), 10);
 
 let lastTime = performance.now();
 let deltaTime: number;
@@ -163,10 +192,17 @@ function gameLoop(): void
 
     if (isKeyPressed(" ")) 
     {
-        square.addSegment();
+        snake.addSegment();
     }
 
-    square.update();
+    snake.update();
+    food.draw("green");
+
+    if(checkSquareCollision(snake.squares[0], food))
+    {
+        food.pos.x = 100;
+        food.pos.y = 10;
+    }
 
     requestAnimationFrame(gameLoop);
 }
