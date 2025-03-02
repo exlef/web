@@ -42,22 +42,44 @@ class Vector2
         this.x = x;
         this.y = y;
     }
+
+    clone(): Vector2 
+    {
+        return new Vector2(this.x, this.y);
+    }
+}
+
+class Square
+{
+    pos : Vector2;
+    width : number;
+
+    constructor(pos : Vector2, width : number)
+    {
+        this.pos = pos;
+        this.width = width;
+    }
+
+    draw(): void 
+    {
+        ctx!.fillStyle = "red"; // Set color
+        ctx!.fillRect(this.pos.x, this.pos.y, this.width, this.width);
+    }
 }
 
 class Snake 
 {
-    width: number;
-    x: number;
-    y: number;
+    squares : Array<Square>;
+    width : number;
     direction: Vector2;
     movementInterval: number;
     moveTimer: number;
 
     constructor(width: number, x: number, y: number) 
     {
+        this.squares = new Array<Square>;
+        this.squares.push(new Square(new Vector2(x,y), width));
         this.width = width;
-        this.x = x;
-        this.y = y;
         this.direction = new Vector2(0, -1);
         this.movementInterval = 0.2;
         this.moveTimer = 0;
@@ -92,19 +114,38 @@ class Snake
             this.move();
             this.moveTimer = -deltaTime;
         }
-        this.draw();
+        for (let i = 0; i < this.squares.length; i++) 
+        {
+            const element = this.squares[i];
+            element.draw();
+        }
     }
 
     move(): void 
     {
-        this.x += this.direction.x * this.width;
-        this.y += this.direction.y * this.width;
+        for (let i = this.squares.length - 1; i >= 0; i--)
+        {
+            if(i > 0)
+            {
+                this.squares[i].pos = this.squares[i - 1].pos.clone();
+                // this.squares[i].pos.x = this.squares[i - 1].pos.x;
+                // this.squares[i].pos.y = this.squares[i - 1].pos.y;
+            }
+            else if(i == 0)
+            {
+                this.squares[i].pos.x += this.direction.x * this.width;
+                this.squares[i].pos.y += this.direction.y * this.width;
+            }
+        }
     }
 
-    draw(): void 
+    addSegment()
     {
-        ctx!.fillStyle = "red"; // Set color
-        ctx!.fillRect(this.x, this.y, this.width, this.width);
+        const lastSquare = this.squares[this.squares.length - 1];
+        this.squares.push(new Square(
+            new Vector2(lastSquare.pos.x, lastSquare.pos.y), 
+            this.width
+        ));
     }
 }
 
@@ -119,6 +160,11 @@ function gameLoop(): void
     lastTime = currentTime;
 
     ctx!.clearRect(0, 0, canvas.width, canvas.height);
+
+    if (isKeyPressed(" ")) 
+    {
+        square.addSegment();
+    }
 
     square.update();
 
