@@ -43,6 +43,23 @@ function checkSquareCollision(squareA: Square, squareB: Square): boolean
     );
 }
 
+// Random number between 0 (inclusive) and 1 (exclusive)
+const random = Math.random();
+
+// Random number between min (inclusive) and max (exclusive)
+function getRandomNumber(min: number, max: number): number 
+{
+    return Math.random() * (max - min) + min;
+}
+
+// Random integer between min (inclusive) and max (inclusive)
+function getRandomInt(min: number, max: number): number 
+{
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 class Vector2 
 {
     x: number;
@@ -177,8 +194,9 @@ class Snake
     }
 }
 
-const snake = new Snake(10, (canvas.width - 10) / 2, (canvas.height - 10) / 2);
-const food = new Square(new Vector2(10,10), 10);
+const snakeSquareWidth = 20;
+const snake = new Snake(snakeSquareWidth, (canvas.width - snakeSquareWidth) / 2, (canvas.height - snakeSquareWidth) / 2);
+const food = new Square(new Vector2((canvas.width - snakeSquareWidth ) / 2, canvas.height / 2 - 100), snakeSquareWidth);
 
 let lastTime = performance.now();
 let deltaTime: number;
@@ -200,11 +218,18 @@ function gameLoop(): void
 
     if(checkSquareCollision(snake.squares[0], food))
     {
-        food.pos.x = 100;
-        food.pos.y = 10;
+        snake.addSegment();
+        food.pos.x = getRandomInt(0, canvas.width);
+        food.pos.y = getRandomInt(0, canvas.height);
     }
 
-    requestAnimationFrame(gameLoop);
+    
+    const head = snake.squares[0];
+    const check = (head.pos.x > canvas.width || head.pos.x < 0 || head.pos.y > canvas.height || head.pos.y <0);
+    if(!check)
+    {
+        requestAnimationFrame(gameLoop);
+    }
 }
 
 gameLoop();
