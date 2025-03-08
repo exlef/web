@@ -1,4 +1,4 @@
-"use strict";
+import { isKeyPressed } from "./input.js";
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 if (!ctx) {
@@ -10,28 +10,12 @@ function resizeCanvas() {
 }
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
-const keys = {};
-window.addEventListener("keydown", (event) => {
-    keys[event.key] = true;
-});
-window.addEventListener("keyup", (event) => {
-    keys[event.key] = false;
-});
-function isKeyPressed(key) {
-    return keys[key] === true;
-}
 function checkSquareCollision(squareA, squareB) {
     // Check for overlap on both axes
     return (squareA.pos.x < squareB.pos.x + squareB.width &&
         squareA.pos.x + squareA.width > squareB.pos.x &&
         squareA.pos.y < squareB.pos.y + squareB.width &&
         squareA.pos.y + squareA.width > squareB.pos.y);
-}
-// Random number between 0 (inclusive) and 1 (exclusive)
-const random = Math.random();
-// Random number between min (inclusive) and max (exclusive)
-function getRandomNumber(min, max) {
-    return Math.random() * (max - min) + min;
 }
 // Random integer between min (inclusive) and max (inclusive)
 function getRandomInt(min, max) {

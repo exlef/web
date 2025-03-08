@@ -1,3 +1,5 @@
+import { isKeyPressed } from "./input.js";
+
 const canvas = document.getElementById("gameCanvas") as HTMLCanvasElement;
 const ctx = canvas.getContext("2d");
 
@@ -15,22 +17,6 @@ function resizeCanvas(): void
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 
-const keys: { [key: string]: boolean } = {};
-
-window.addEventListener("keydown", (event) => 
-{
-    keys[event.key] = true;
-});
-
-window.addEventListener("keyup", (event) => 
-{
-    keys[event.key] = false;
-});
-
-function isKeyPressed(key: string): boolean 
-{
-    return keys[key] === true;
-}
 
 function checkSquareCollision(squareA: Square, squareB: Square): boolean 
 {
@@ -41,15 +27,6 @@ function checkSquareCollision(squareA: Square, squareB: Square): boolean
     squareA.pos.y < squareB.pos.y + squareB.width &&
     squareA.pos.y + squareA.width > squareB.pos.y
     );
-}
-
-// Random number between 0 (inclusive) and 1 (exclusive)
-const random = Math.random();
-
-// Random number between min (inclusive) and max (exclusive)
-function getRandomNumber(min: number, max: number): number 
-{
-    return Math.random() * (max - min) + min;
 }
 
 // Random integer between min (inclusive) and max (inclusive)
