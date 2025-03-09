@@ -1,4 +1,6 @@
 import { isKeyPressed } from "./input.js";
+import { getRandomInt, Vector2 } from "./math.js";
+import { checkAABBCollisionAlt } from "./aabb-collision.js";
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 if (!ctx) {
@@ -10,42 +12,22 @@ function resizeCanvas() {
 }
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
-function checkSquareCollision(squareA, squareB) {
-    // Check for overlap on both axes
-    return (squareA.pos.x < squareB.pos.x + squareB.width &&
-        squareA.pos.x + squareA.width > squareB.pos.x &&
-        squareA.pos.y < squareB.pos.y + squareB.width &&
-        squareA.pos.y + squareA.width > squareB.pos.y);
-}
-// Random integer between min (inclusive) and max (inclusive)
-function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-class Vector2 {
-    constructor(x, y) {
-        this.x = x;
-        this.y = y;
-    }
-    clone() {
-        return new Vector2(this.x, this.y);
-    }
-}
-class Square {
+class Rectangle {
     constructor(pos, width) {
-        this.pos = pos;
+        this.x = pos.x;
+        this.y = pos.y;
         this.width = width;
+        this.height = width;
     }
     draw(color) {
         ctx.fillStyle = color; // Set color
-        ctx.fillRect(this.pos.x, this.pos.y, this.width, this.width);
+        ctx.fillRect(this.x, this.y, this.width, this.height);
     }
 }
 class Snake {
     constructor(width, x, y) {
         this.squares = new Array;
-        this.squares.push(new Square(new Vector2(x, y), width));
+        this.squares.push(new Rectangle(new Vector2(x, y), width));
         this.width = width;
         this.direction = new Vector2(0, -1);
         this.movementInterval = 0.2;
@@ -83,13 +65,12 @@ class Snake {
     move() {
         for (let i = this.squares.length - 1; i >= 0; i--) {
             if (i > 0) {
-                this.squares[i].pos = this.squares[i - 1].pos.clone();
-                // this.squares[i].pos.x = this.squares[i - 1].pos.x;
-                // this.squares[i].pos.y = this.squares[i - 1].pos.y;
+                this.squares[i].x = this.squares[i - 1].x;
+                this.squares[i].y = this.squares[i - 1].y;
             }
             else if (i == 0) {
-                this.squares[i].pos.x += this.direction.x * this.width;
-                this.squares[i].pos.y += this.direction.y * this.width;
+                this.squares[i].x += this.direction.x * this.width;
+                this.squares[i].y += this.direction.y * this.width;
             }
         }
     }
@@ -97,19 +78,19 @@ class Snake {
         const head = this.squares[0];
         for (let i = 1; i < this.squares.length; i++) {
             const tail = this.squares[i];
-            if (checkSquareCollision(head, tail)) {
+            if (checkAABBCollisionAlt(head, tail)) {
                 this.isAlive = false;
             }
         }
     }
     addSegment() {
         const lastSquare = this.squares[this.squares.length - 1];
-        this.squares.push(new Square(new Vector2(lastSquare.pos.x, lastSquare.pos.y), this.width));
+        this.squares.push(new Rectangle(new Vector2(lastSquare.x, lastSquare.y), this.width));
     }
 }
 const snakeSquareWidth = 20;
 const snake = new Snake(snakeSquareWidth, (canvas.width - snakeSquareWidth) / 2, (canvas.height - snakeSquareWidth) / 2);
-const food = new Square(new Vector2((canvas.width - snakeSquareWidth) / 2, canvas.height / 2 - 100), snakeSquareWidth);
+const food = new Rectangle(new Vector2((canvas.width - snakeSquareWidth) / 2, canvas.height / 2 - 100), snakeSquareWidth);
 let lastTime = performance.now();
 let deltaTime;
 function gameLoop() {
@@ -122,15 +103,18 @@ function gameLoop() {
     }
     snake.update();
     food.draw("green");
-    if (checkSquareCollision(snake.squares[0], food)) {
+    if (checkAABBCollisionAlt(snake.squares[0], food)) {
         snake.addSegment();
-        food.pos.x = getRandomInt(0, canvas.width);
-        food.pos.y = getRandomInt(0, canvas.height);
+        food.x = getRandomInt(0, canvas.width);
+        food.y = getRandomInt(0, canvas.height);
     }
     const head = snake.squares[0];
-    const check = (head.pos.x > canvas.width || head.pos.x < 0 || head.pos.y > canvas.height || head.pos.y < 0);
+    const check = (head.x > canvas.width || head.x < 0 || head.y > canvas.height || head.y < 0);
     if (!check) {
         requestAnimationFrame(gameLoop);
+    }
+    else {
+        console.log("game over");
     }
 }
 gameLoop();

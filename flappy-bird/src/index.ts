@@ -1,6 +1,6 @@
 import { isKeyPressed } from "./input.js";
-import { getRandomInt } from "./math.js";
-import { checkAABBCollision } from "./aabb-collision.js";;
+import { getRandomInt, Vector2 } from "./math.js";
+import { checkAABBCollisionAlt } from "./aabb-collision.js";
 
 const canvas = document.getElementById("gameCanvas") as HTMLCanvasElement;
 const ctx = canvas.getContext("2d");
@@ -19,24 +19,7 @@ function resizeCanvas(): void
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 
-class Vector2 
-{
-    x: number;
-    y: number;
-
-    constructor(x: number, y: number) 
-    {
-        this.x = x;
-        this.y = y;
-    }
-
-    clone(): Vector2 
-    {
-        return new Vector2(this.x, this.y);
-    }
-}
-
-class Square
+class Rectangle
 {
     x : number;
     y : number;
@@ -61,7 +44,7 @@ class Square
 
 class Snake 
 {
-    squares : Array<Square>;
+    squares : Array<Rectangle>;
     width : number;
     direction: Vector2;
     movementInterval: number;
@@ -70,8 +53,8 @@ class Snake
 
     constructor(width: number, x: number, y: number) 
     {
-        this.squares = new Array<Square>;
-        this.squares.push(new Square(new Vector2(x,y), width));
+        this.squares = new Array<Rectangle>;
+        this.squares.push(new Rectangle(new Vector2(x,y), width));
         this.width = width;
         this.direction = new Vector2(0, -1);
         this.movementInterval = 0.2;
@@ -123,7 +106,6 @@ class Snake
         {
             if(i > 0)
             {
-                // this.squares[i].pos = this.squares[i - 1].pos.clone();
                 this.squares[i].x = this.squares[i - 1].x;
                 this.squares[i].y = this.squares[i - 1].y;
             }
@@ -138,14 +120,12 @@ class Snake
     checkCollisions() : void
     {
         const head = this.squares[0];
+        
         for (let i = 1; i < this.squares.length; i++) 
         {
             const tail = this.squares[i];
-            // if(checkSquareCollision(head, tail))
-            // {
-            // this.isAlive = false;
-            // }
-            if(checkAABBCollision(head, tail))
+            
+            if(checkAABBCollisionAlt(head, tail))
             {
                 this.isAlive = false;
             }
@@ -155,7 +135,7 @@ class Snake
     addSegment()
     {
         const lastSquare = this.squares[this.squares.length - 1];
-        this.squares.push(new Square(
+        this.squares.push(new Rectangle(
             new Vector2(lastSquare.x, lastSquare.y), 
             this.width
         ));
@@ -164,7 +144,7 @@ class Snake
 
 const snakeSquareWidth = 20;
 const snake = new Snake(snakeSquareWidth, (canvas.width - snakeSquareWidth) / 2, (canvas.height - snakeSquareWidth) / 2);
-const food = new Square(new Vector2((canvas.width - snakeSquareWidth ) / 2, canvas.height / 2 - 100), snakeSquareWidth);
+const food = new Rectangle(new Vector2((canvas.width - snakeSquareWidth ) / 2, canvas.height / 2 - 100), snakeSquareWidth);
 
 let lastTime = performance.now();
 let deltaTime: number;
@@ -184,7 +164,7 @@ function gameLoop(): void
     snake.update();
     food.draw("green");
 
-    if(checkAABBCollision(snake.squares[0], food))
+    if(checkAABBCollisionAlt(snake.squares[0], food))
     {
         snake.addSegment();
         food.x = getRandomInt(0, canvas.width);
@@ -196,6 +176,10 @@ function gameLoop(): void
     if(!check)
     {
         requestAnimationFrame(gameLoop);
+    }
+    else
+    {
+        console.log("game over");
     }
 }
 
