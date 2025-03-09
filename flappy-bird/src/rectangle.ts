@@ -1,5 +1,4 @@
 import { ctx } from "./canvas.js";
-import { Vector2 } from "./math.js";
 
 export class Rectangle
 {
@@ -8,13 +7,13 @@ export class Rectangle
     width : number;
     height : number;
 
-    constructor(pos : Vector2, width : number)
+    constructor(x: number, y: number, width : number, height: number)
     {
         
-        this.x = pos.x;
-        this.y = pos.y;
+        this.x = x;
+        this.y = y;
         this.width = width;
-        this.height = width;
+        this.height = height;
     }
 
     draw(color : string): void 

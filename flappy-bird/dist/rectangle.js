@@ -1,10 +1,10 @@
 import { ctx } from "./canvas.js";
 export class Rectangle {
-    constructor(pos, width) {
-        this.x = pos.x;
-        this.y = pos.y;
+    constructor(x, y, width, height) {
+        this.x = x;
+        this.y = y;
         this.width = width;
-        this.height = width;
+        this.height = height;
     }
     draw(color) {
         ctx.fillStyle = color; // Set color
