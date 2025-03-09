@@ -14,7 +14,7 @@ interface BoundingBox {
  * @param boxB The second bounding box
  * @returns True if the boxes are colliding, false otherwise
  */
-function checkAABBCollision(boxA: BoundingBox, boxB: BoundingBox): boolean 
+export function checkAABBCollision(boxA: BoundingBox, boxB: BoundingBox): boolean 
 {
     // Check if boxA's right edge is to the left of boxB's left edge
     // or if boxA's left edge is to the right of boxB's right edge
@@ -38,7 +38,7 @@ function checkAABBCollision(boxA: BoundingBox, boxB: BoundingBox): boolean
  * Alternative implementation using the separating axis theorem logic
  * (Same result, just expressed differently)
  */
-function checkAABBCollisionAlt(boxA: BoundingBox, boxB: BoundingBox): boolean 
+export function checkAABBCollisionAlt(boxA: BoundingBox, boxB: BoundingBox): boolean 
 {
     // Check for overlap on both axes
     return (
