@@ -191,14 +191,6 @@ function gameLoop(): void
         food.y = getRandomInt(0, canvas.height);
     }
 
-    // if(checkSquareCollision(snake.squares[0], food))
-    // {
-    //     snake.addSegment();
-    //     food.x = getRandomInt(0, canvas.width);
-    //     food.y = getRandomInt(0, canvas.height);
-    // }
-
-    
     const head = snake.squares[0];
     const check = (head.x > canvas.width || head.x < 0 || head.y > canvas.height || head.y <0);
     if(!check)
