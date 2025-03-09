@@ -19,18 +19,6 @@ function resizeCanvas(): void
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 
-
-// function checkSquareCollision(squareA: Square, squareB: Square): boolean 
-// {
-//     // Check for overlap on both axes
-//     return (
-//         squareA.pos.x < squareB.pos.x + squareB.width &&
-//     squareA.pos.x + squareA.width > squareB.pos.x &&
-//     squareA.pos.y < squareB.pos.y + squareB.width &&
-//     squareA.pos.y + squareA.width > squareB.pos.y
-//     );
-// }
-
 class Vector2 
 {
     x: number;
