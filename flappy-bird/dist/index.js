@@ -1,29 +1,8 @@
+import { canvas, ctx } from "./canvas.js";
 import { isKeyPressed } from "./input.js";
 import { getRandomInt, Vector2 } from "./math.js";
 import { checkAABBCollisionAlt } from "./aabb-collision.js";
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
-if (!ctx) {
-    throw new Error("Failed to get canvas context");
-}
-function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
-window.addEventListener("resize", resizeCanvas);
-resizeCanvas();
-class Rectangle {
-    constructor(pos, width) {
-        this.x = pos.x;
-        this.y = pos.y;
-        this.width = width;
-        this.height = width;
-    }
-    draw(color) {
-        ctx.fillStyle = color; // Set color
-        ctx.fillRect(this.x, this.y, this.width, this.height);
-    }
-}
+import { Rectangle } from "./rectangle.js";
 class Snake {
     constructor(width, x, y) {
         this.squares = new Array;
@@ -112,9 +91,6 @@ function gameLoop() {
     const check = (head.x > canvas.width || head.x < 0 || head.y > canvas.height || head.y < 0);
     if (!check) {
         requestAnimationFrame(gameLoop);
-    }
-    else {
-        console.log("game over");
     }
 }
 gameLoop();
