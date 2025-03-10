@@ -1,10 +1,15 @@
 import { Rectangle } from "./rectangle.js";
 import { isMousePressed } from "./input.js";
+import { Vector2 } from "./math.js";
 
 export class Bird 
 {
     rectnagle: Rectangle;
     jumpTimer: number = 0;
+    vel: Vector2 = new Vector2(0,0);
+    acc: Vector2 = new Vector2(0,0);
+    mass: number = 1;
+    dt: number = 0.1;
 
     constructor(x: number, y: number, width: number) 
     {
@@ -13,29 +18,25 @@ export class Bird
 
     update(): void 
     {
-        this.jumpTimer += 0.1;
-
         if(isMousePressed(0))
         {
-            this.jumpTimer = 0;
+            this.applyForce(0, -100);
         }
 
-        if(this.jumpTimer < 1)
-        {
-            this.rectnagle.y -= 8;
-        }
-        else 
-        {
-            this.addGravity();
-        }
-
-        this.rectnagle.x += 5;
+        this.applyForce(0, 9.8);
+        
+        this.vel.x = this.acc.x * this.dt;
+        this.vel.y = this.acc.y * this.dt;
+        
+        this.rectnagle.x += this.vel.x * this.dt;
+        this.rectnagle.y += this.vel.y * this.dt;
 
         this.rectnagle.draw("red");
     }
 
-    addGravity(): void
+    applyForce(x: number, y: number): void
     {
-        this.rectnagle.y += 10;
+        this.acc.x += x / this.mass;
+        this.acc.y += y / this.mass;
     }
 }
