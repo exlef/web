@@ -1,4 +1,17 @@
-let user = "hey yoooo";
-console.log(user);
+const sum = (a: number, b: number) : number =>
+{
+    return a+b;
+}
 
-console.log(12 / "6");
+function add(a: number, b: number) : number 
+{
+    return a + b;    
+}
+
+class math
+{
+    sum (a: number, b: number) : number
+    {
+        return a + b;
+    }
+}
