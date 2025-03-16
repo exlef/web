@@ -1,18 +1,20 @@
-let x: number | string;
+import { match, P } from "ts-pattern";
 
-x = 3;
-x = "hey";
-
-///
-
-function tryAdd(a: number, b: any) : number | boolean
-{
-    if(typeof b === "number")
-    {
+function tryAdd(a: number, b: any): number | boolean {
+    if (typeof b === "number") {
         return a + b;
     }
     return false;
 }
 
-console.log(tryAdd(3, "a"));
-console.log(tryAdd(3,3));
+let result = match(tryAdd(3,3))
+    .with(P.number, (value) => {
+        console.log("Addition successful:", value);
+    })
+    .with(P.boolean, (value) => {
+        console.log("Addition failed:", value);
+    })
+    .exhaustive(); // Ensures all cases are handled
+
+
+    // next : https://www.youtube.com/watch?v=9dw2ik9N8wo&list=PL0Zuz27SZ-6NS8GXt5nPrcYpust89zq_b&index=3
