@@ -1,17 +1,18 @@
-const sum = (a: number, b: number) : number =>
-{
-    return a+b;
-}
+let x: number | string;
 
-function add(a: number, b: number) : number 
-{
-    return a + b;    
-}
+x = 3;
+x = "hey";
 
-class math
+///
+
+function tryAdd(a: number, b: any) : number | boolean
 {
-    sum (a: number, b: number) : number
+    if(typeof b === "number")
     {
         return a + b;
     }
+    return false;
 }
+
+console.log(tryAdd(3, "a"));
+console.log(tryAdd(3,3));
